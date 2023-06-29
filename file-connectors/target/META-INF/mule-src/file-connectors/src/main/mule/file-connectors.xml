@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="1da4b974-6515-4742-b3b9-0a18dde06885" >
+		<file:connection workingDir="C:\Users\91938\Documents" />
+	</file:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5471ff80-9150-43e8-a001-f41ff9f7f34c" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="file-connectorsFlow" doc:id="3b69b2eb-ddbf-405f-bc87-c66f69f6a438" >
+		<http:listener doc:name="Listener" doc:id="867500d2-aada-4512-b821-2d6adf3adf35" config-ref="HTTP_Listener_config" path="/testfile"/>
+		<logger level="INFO" doc:name="Logger" doc:id="fb40d48d-141e-4dd7-9a10-23d192cce568" message="we are test a readfile"/>
+		<file:read doc:name="Read-file" doc:id="878a3840-217a-4239-b66a-7a5ded6dca56" config-ref="File_Config" path="M:\Readfile\sample2.txt"/>
+		<ee:transform doc:name="Transform Message" doc:id="c9dfe0fb-ac80-44c5-ba40-8aa1bf47b80d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="e1f8abd3-91d4-49d5-bbbb-fee6101667bd" config-ref="File_Config" path="M:\writefile\rams.csv" mode="APPEND"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1ff5260d-9295-4731-b8f4-8a90668dc8b0" message="#[payload]"/>
+	</flow>
+</mule>
